@@ -14,6 +14,7 @@ var issueListCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var state string
+		gitlabClient, repo := git.InitGitlabClient()
 		if lb, _ := cmd.Flags().GetBool("all"); lb {
 			state = "all"
 		} else if lb, _ := cmd.Flags().GetBool("closed"); lb {
@@ -31,6 +32,10 @@ var issueListCmd = &cobra.Command{
 			}
 			l.Labels = label
 		}
+		if la, _ := cmd.Flags().GetBool("own"); la {
+			users, _, _ := gitlabClient.Users.CurrentUser()
+			l.AuthorID = gitlab.Int(users.ID)
+		}
 		if lb, _ := cmd.Flags().GetString("milestone"); lb != "" {
 			l.Milestone = gitlab.String(lb)
 		}
@@ -43,7 +48,6 @@ var issueListCmd = &cobra.Command{
 		if p, _ := cmd.Flags().GetInt("per-page"); p != 0 {
 			l.PerPage = p
 		}
-		gitlabClient, repo := git.InitGitlabClient()
 		if r, _ := cmd.Flags().GetString("repo"); r != "" {
 			repo = r
 		}
@@ -63,6 +67,7 @@ func init() {
 	issueListCmd.Flags().BoolP("all", "a", false, "Get all issues")
 	issueListCmd.Flags().BoolP("closed", "c", false, "Get only closed issues")
 	issueListCmd.Flags().BoolP("opened", "o", false, "Get only opened issues")
+	issueListCmd.Flags().BoolP("own", "O", false, "Get own issues")
 	issueListCmd.Flags().BoolP("confidential", "", false, "Filter by confidential issues")
 	issueListCmd.Flags().IntP("page", "p", 1, "Page number")
 	issueListCmd.Flags().IntP("per-page", "P", 20, "Number of items to list per page")
