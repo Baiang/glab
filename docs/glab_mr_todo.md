@@ -1,19 +1,19 @@
-## glab mr close
+## glab mr todo
 
-Close merge requests
+Add a ToDo to merge request
 
 ### Synopsis
 
-Close merge requests
+Add a ToDo to merge request
 
 ```
-glab mr close <id> [flags]
+glab mr todo <merge-request-id> [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for close
+  -h, --help   help for todo
 ```
 
 ### Options inherited from parent commands
